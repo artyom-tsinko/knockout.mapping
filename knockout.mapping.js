@@ -547,11 +547,13 @@
 					return mappedRootObject()[mappedRootObject.mappedIndexOf(item)];
 				}
 
-				mappedRootObject.mappedCreate = function (value) {
+				mappedRootObject.mappedCreate = function (value, position) {
 					if (mappedRootObject.mappedIndexOf(value) !== -1) {
 						throw new Error("There already is an object with the key that you specified.");
 					}
-
+					if (typeof position === "undefined") {
+					    position = ko.utils.unwrapObservable(mappedRootObject).length;
+					}
 					var item = hasCreateCallback() ? createCallback(value) : value;
 					if (hasUpdateCallback()) {
 						var newValue = updateCallback(item, value);
@@ -561,7 +563,7 @@
 							item = newValue;
 						}
 					}
-					mappedRootObject.push(item);
+					mappedRootObject.splice(position, 0, item);
 					return item;
 				}
 			}
